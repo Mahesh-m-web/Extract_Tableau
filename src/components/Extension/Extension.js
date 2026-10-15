@@ -7,6 +7,9 @@ import compareVersions from 'compare-versions';
 /* global tableau */
 
 function Extension (props) {
+  // CRA sets PUBLIC_URL to the repository subpath for GitHub Pages builds.
+  // Using only window.location.origin drops that path and sends dialogs to a 404.
+  const appBasePath = process.env.PUBLIC_URL || '';
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState('');
 
@@ -114,7 +117,7 @@ function Extension (props) {
 
   function configure () {
     console.log('[Extension.js] Opening configure popup');
-    const popupUrl = `${window.location.origin}/configure`;
+    const popupUrl = `${window.location.origin}${appBasePath}/configure`;
     tableau.extensions.ui.displayDialogAsync(popupUrl, null, { height: 500, width: 500 }).then((closePayload) => {
       refreshSettings();
       console.log('[Extension.js] Config window closed', props)
@@ -152,7 +155,7 @@ function Extension (props) {
     }
   }
   function desktopExportHandler () {
-    const popupUrl = `${window.location.origin}/desktopexport`;
+    const popupUrl = `${window.location.origin}${appBasePath}/desktopexport`;
     tableau.extensions.ui.displayDialogAsync(popupUrl, '', { height: 350, width: 400 }).then((closePayload) => {
       console.log('[Extension.js] Export window closed')
     }).catch((error) => {
